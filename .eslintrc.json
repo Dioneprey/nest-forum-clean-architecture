@@ -1,13 +1,13 @@
 {
   "extends": "@rocketseat/eslint-config/node",
   "rules": {
-      "no-useless-constructor": "off",
+      "no-useless-constructor": "off"/*,
       "linebreak-style": ["error", "windows"],
       "prettier/prettier": [
         "error",
         {
           "endOfLine": "auto"
         }
-      ]
+      ]*/
   }
 }
