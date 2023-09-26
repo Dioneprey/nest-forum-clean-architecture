@@ -1,15 +1,13 @@
 import { DomainEvents } from 'src/core/events/domain-events'
 import { PaginationParams } from 'src/core/repositories/pagination-params'
-import { AnswerAttachmentsRepository } from 'src/domain/forum/application/repositories/answer-attachments-repository'
+import { AnswerAttachmentRepository } from 'src/domain/forum/application/repositories/answer-attachments-repository'
 import { AnswersRepository } from 'src/domain/forum/application/repositories/answers-repository'
 import { Answer } from 'src/domain/forum/enterprise/entities/answer'
 
 export class InMemoryAnswersRepository implements AnswersRepository {
   public items: Answer[] = []
 
-  constructor(
-    private answerAttachmentsRepository: AnswerAttachmentsRepository,
-  ) {}
+  constructor(private answerAttachmentRepository: AnswerAttachmentRepository) {}
 
   async findById(id: string) {
     const answer = this.items.find((item) => item.id.toString() === id)
@@ -48,6 +46,6 @@ export class InMemoryAnswersRepository implements AnswersRepository {
 
     this.items.splice(itemIndex, 1)
 
-    this.answerAttachmentsRepository.deleteManyByAnswerId(answer.id.toString())
+    this.answerAttachmentRepository.deleteManyByAnswerId(answer.id.toString())
   }
 }

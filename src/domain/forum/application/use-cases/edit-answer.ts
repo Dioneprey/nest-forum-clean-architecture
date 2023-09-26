@@ -4,8 +4,8 @@ import { AnswersRepository } from '../repositories/answers-repository'
 import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error'
 import { NotAllowedError } from 'src/core/errors/not-allowed-error'
 import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list'
-import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository'
-import { AnswerAttachments } from '../../enterprise/entities/answer-attachment'
+import { AnswerAttachmentRepository } from '../repositories/answer-attachments-repository'
+import { AnswerAttachment } from '../../enterprise/entities/answer-attachment'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 
 interface EditAnswerUseCaseRequest {
@@ -24,7 +24,7 @@ type EditAnswerUseCaseResponse = Either<
 export class EditAnswerUseCase {
   constructor(
     private answersRepository: AnswersRepository,
-    private answerAttachmentsRepository: AnswerAttachmentsRepository,
+    private answerAttachmentRepository: AnswerAttachmentRepository,
   ) {}
 
   async execute({
@@ -43,15 +43,15 @@ export class EditAnswerUseCase {
       return left(new NotAllowedError())
     }
 
-    const currentAnswerAttachments =
-      await this.answerAttachmentsRepository.findManyByAnswerId(answerId)
+    const currentAnswerAttachment =
+      await this.answerAttachmentRepository.findManyByAnswerId(answerId)
 
     const answerAttachmentList = new AnswerAttachmentList(
-      currentAnswerAttachments,
+      currentAnswerAttachment,
     )
     console.log(attachmentsId)
     const answersAttachments = attachmentsId.map((attachmentId) => {
-      return AnswerAttachments.create({
+      return AnswerAttachment.create({
         attachmentId: new UniqueEntityID(attachmentId),
         answerId: answer.id,
       })

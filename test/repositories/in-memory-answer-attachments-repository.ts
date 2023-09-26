@@ -1,24 +1,24 @@
-import { AnswerAttachmentsRepository } from 'src/domain/forum/application/repositories/answer-attachments-repository'
-import { AnswerAttachments } from 'src/domain/forum/enterprise/entities/answer-attachment'
+import { AnswerAttachmentRepository } from 'src/domain/forum/application/repositories/answer-attachments-repository'
+import { AnswerAttachment } from 'src/domain/forum/enterprise/entities/answer-attachment'
 
-export class InMemoryAnswerAttachmentsRepository
-  implements AnswerAttachmentsRepository
+export class InMemoryAnswerAttachmentRepository
+  implements AnswerAttachmentRepository
 {
-  public items: AnswerAttachments[] = []
+  public items: AnswerAttachment[] = []
 
   async findManyByAnswerId(answerId: string) {
-    const answerAttachments = this.items.filter(
+    const answerAttachment = this.items.filter(
       (item) => item.answerId.toString() === answerId,
     )
 
-    return answerAttachments
+    return answerAttachment
   }
 
   async deleteManyByAnswerId(answerId: string) {
-    const answerAttachments = this.items.filter(
+    const answerAttachment = this.items.filter(
       (item) => item.answerId.toString() !== answerId,
     )
 
-    this.items = answerAttachments
+    this.items = answerAttachment
   }
 }
