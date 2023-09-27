@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { QuestionAttachmentsRepository } from "src/domain/forum/application/repositories/questions-attachments-repository";
-import { PrismaService } from "../prisma.service";
-import { PrismaQuestionAttachmentMapper } from "../mappers/prisma-question-attachment-mapper";
+import { Injectable } from '@nestjs/common'
+import { QuestionAttachmentsRepository } from 'src/domain/forum/application/repositories/questions-attachments-repository'
+import { PrismaService } from '../prisma.service'
+import { PrismaQuestionAttachmentMapper } from '../mappers/prisma-question-attachment-mapper'
 
 @Injectable()
 export class PrismaQuestionAttachmentsRepository
@@ -14,9 +14,9 @@ export class PrismaQuestionAttachmentsRepository
       where: {
         questionId,
       },
-    });
+    })
 
-    return questionAttachments.map(PrismaQuestionAttachmentMapper.toDomain);
+    return questionAttachments.map(PrismaQuestionAttachmentMapper.toDomain)
   }
 
   async deleteManyByQuestionId(questionId: string) {
@@ -24,6 +24,6 @@ export class PrismaQuestionAttachmentsRepository
       where: {
         questionId,
       },
-    });
+    })
   }
 }

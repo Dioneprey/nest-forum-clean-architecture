@@ -5,24 +5,24 @@ import {
   Put,
   HttpCode,
   Param,
-} from "@nestjs/common";
-import { CurrentUser } from "src/infra/auth/current-user.decorator";
-import { UserPayload } from "src/infra/auth/jwt.strategy";
-import { ZodValidationPipe } from "src/infra/http/pipes/zod-validation.pipe";
+} from '@nestjs/common'
+import { CurrentUser } from 'src/infra/auth/current-user.decorator'
+import { UserPayload } from 'src/infra/auth/jwt.strategy'
+import { ZodValidationPipe } from 'src/infra/http/pipes/zod-validation.pipe'
 
-import { z } from "zod";
-import { EditQuestionUseCase } from "src/domain/forum/application/use-cases/edit-question";
+import { z } from 'zod'
+import { EditQuestionUseCase } from 'src/domain/forum/application/use-cases/edit-question'
 
 const editQuestionBodySchema = z.object({
   title: z.string(),
   content: z.string(),
-});
+})
 
-const bodyValidationPipe = new ZodValidationPipe(editQuestionBodySchema);
+const bodyValidationPipe = new ZodValidationPipe(editQuestionBodySchema)
 
-type EditQuestionBodySchema = z.infer<typeof editQuestionBodySchema>;
+type EditQuestionBodySchema = z.infer<typeof editQuestionBodySchema>
 
-@Controller("/questions/:id")
+@Controller('/questions/:id')
 export class EditQuestionController {
   constructor(private editQuestion: EditQuestionUseCase) {}
 
@@ -31,10 +31,10 @@ export class EditQuestionController {
   async handle(
     @Body(bodyValidationPipe) body: EditQuestionBodySchema,
     @CurrentUser() user: UserPayload,
-    @Param("id") questionId: string,
+    @Param('id') questionId: string,
   ) {
-    const { title, content } = body;
-    const userId = user.sub;
+    const { title, content } = body
+    const userId = user.sub
 
     const result = await this.editQuestion.execute({
       title,
@@ -42,10 +42,10 @@ export class EditQuestionController {
       authorId: userId,
       attachmentsId: [],
       questionId,
-    });
+    })
 
     if (result.isLeft()) {
-      throw new BadRequestException();
+      throw new BadRequestException()
     }
   }
 }

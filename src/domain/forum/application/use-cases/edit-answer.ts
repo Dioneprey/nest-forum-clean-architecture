@@ -1,26 +1,28 @@
-import { Either, left, right } from "src/core/either";
-import { Answer } from "../../enterprise/entities/answer";
-import { AnswersRepository } from "../repositories/answers-repository";
-import { ResourceNotFoundError } from "src/core/errors/resource-not-found-error";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { AnswerAttachmentList } from "../../enterprise/entities/answer-attachment-list";
-import { AnswerAttachmentRepository } from "../repositories/answer-attachments-repository";
-import { AnswerAttachment } from "../../enterprise/entities/answer-attachment";
-import { UniqueEntityID } from "src/core/entities/unique-entity-id";
+import { Either, left, right } from 'src/core/either'
+import { Answer } from '../../enterprise/entities/answer'
+import { AnswersRepository } from '../repositories/answers-repository'
+import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error'
+import { NotAllowedError } from 'src/core/errors/not-allowed-error'
+import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list'
+import { AnswerAttachmentRepository } from '../repositories/answer-attachments-repository'
+import { AnswerAttachment } from '../../enterprise/entities/answer-attachment'
+import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { Injectable } from '@nestjs/common'
 
 interface EditAnswerUseCaseRequest {
-  authorId: string;
-  answerId: string;
-  content?: string;
-  attachmentsId: string[];
+  authorId: string
+  answerId: string
+  content?: string
+  attachmentsId: string[]
 }
 
 type EditAnswerUseCaseResponse = Either<
   ResourceNotFoundError | NotAllowedError,
   {
-    answer: Answer;
+    answer: Answer
   }
->;
+>
+@Injectable()
 export class EditAnswerUseCase {
   constructor(
     private answersRepository: AnswersRepository,
@@ -33,39 +35,39 @@ export class EditAnswerUseCase {
     content,
     attachmentsId,
   }: EditAnswerUseCaseRequest): Promise<EditAnswerUseCaseResponse> {
-    const answer = await this.answersRepository.findById(answerId);
+    const answer = await this.answersRepository.findById(answerId)
 
     if (!answer) {
-      return left(new ResourceNotFoundError());
+      return left(new ResourceNotFoundError())
     }
 
     if (authorId !== answer.authorId.toString()) {
-      return left(new NotAllowedError());
+      return left(new NotAllowedError())
     }
 
     const currentAnswerAttachment =
-      await this.answerAttachmentRepository.findManyByAnswerId(answerId);
+      await this.answerAttachmentRepository.findManyByAnswerId(answerId)
 
     const answerAttachmentList = new AnswerAttachmentList(
       currentAnswerAttachment,
-    );
-    console.log(attachmentsId);
+    )
+    console.log(attachmentsId)
     const answersAttachments = attachmentsId.map((attachmentId) => {
       return AnswerAttachment.create({
         attachmentId: new UniqueEntityID(attachmentId),
         answerId: answer.id,
-      });
-    });
+      })
+    })
 
-    answerAttachmentList.update(answersAttachments);
+    answerAttachmentList.update(answersAttachments)
 
-    answer.attachments = answerAttachmentList;
-    answer.content = content || answer.content;
+    answer.attachments = answerAttachmentList
+    answer.content = content || answer.content
 
-    this.answersRepository.save(answer);
+    this.answersRepository.save(answer)
 
     return right({
       answer,
-    });
+    })
   }
 }

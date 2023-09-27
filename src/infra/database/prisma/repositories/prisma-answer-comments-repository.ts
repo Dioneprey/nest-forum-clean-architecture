@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { PaginationParams } from "src/core/repositories/pagination-params";
-import { AnswerCommentsRepository } from "src/domain/forum/application/repositories/answer-comments-repository";
-import { AnswerComment } from "src/domain/forum/enterprise/entities/answer-comment";
-import { PrismaAnswerCommentMapper } from "../mappers/prisma-answer-comment.mapper";
-import { PrismaService } from "../prisma.service";
+import { Injectable } from '@nestjs/common'
+import { PaginationParams } from 'src/core/repositories/pagination-params'
+import { AnswerCommentsRepository } from 'src/domain/forum/application/repositories/answer-comments-repository'
+import { AnswerComment } from 'src/domain/forum/enterprise/entities/answer-comment'
+import { PrismaAnswerCommentMapper } from '../mappers/prisma-answer-comment.mapper'
+import { PrismaService } from '../prisma.service'
 
 @Injectable()
 export class PrismaAnswerCommentsRepository
@@ -16,13 +16,13 @@ export class PrismaAnswerCommentsRepository
       where: {
         id,
       },
-    });
+    })
 
     if (!answerComment) {
-      return null;
+      return null
     }
 
-    return PrismaAnswerCommentMapper.toDomain(answerComment);
+    return PrismaAnswerCommentMapper.toDomain(answerComment)
   }
 
   async findManyByAnswerId(answerId: string, { page }: PaginationParams) {
@@ -31,21 +31,21 @@ export class PrismaAnswerCommentsRepository
         answerId,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       take: 20,
       skip: (page - 1) * 20,
-    });
+    })
 
-    return answerComments.map(PrismaAnswerCommentMapper.toDomain);
+    return answerComments.map(PrismaAnswerCommentMapper.toDomain)
   }
 
   async create(answerComment: AnswerComment) {
-    const data = PrismaAnswerCommentMapper.toPrisma(answerComment);
+    const data = PrismaAnswerCommentMapper.toPrisma(answerComment)
 
     await this.prisma.comment.create({
       data,
-    });
+    })
   }
 
   async delete(answerComment: AnswerComment) {
@@ -53,6 +53,6 @@ export class PrismaAnswerCommentsRepository
       where: {
         id: answerComment.id.toString(),
       },
-    });
+    })
   }
 }
