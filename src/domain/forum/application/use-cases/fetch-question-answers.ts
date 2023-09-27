@@ -1,18 +1,18 @@
-import { Either, right } from 'src/core/either'
-import { Answer } from '../../enterprise/entities/answer'
-import { AnswersRepository } from '../repositories/answers-repository'
+import { Either, right } from "src/core/either";
+import { Answer } from "../../enterprise/entities/answer";
+import { AnswersRepository } from "../repositories/answers-repository";
 
 interface FetchQuestionAnswersUseCaseRequest {
-  questionId: string
-  page: number
+  questionId: string;
+  page: number;
 }
 
 type FetchQuestionAnswersUseCaseResponse = Either<
   null,
   {
-    answers: Answer[]
+    answers: Answer[];
   }
->
+>;
 
 export class FetchQuestionAnswersUseCase {
   constructor(private answersRepository: AnswersRepository) {}
@@ -26,10 +26,10 @@ export class FetchQuestionAnswersUseCase {
       {
         page,
       },
-    )
+    );
 
     return right({
       answers,
-    })
+    });
   }
 }

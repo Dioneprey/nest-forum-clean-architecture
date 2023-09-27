@@ -1,17 +1,17 @@
-import { Either, left, right } from 'src/core/either'
-import { AnswersRepository } from '../repositories/answers-repository'
-import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error'
-import { NotAllowedError } from 'src/core/errors/not-allowed-error'
+import { Either, left, right } from "src/core/either";
+import { AnswersRepository } from "../repositories/answers-repository";
+import { ResourceNotFoundError } from "src/core/errors/resource-not-found-error";
+import { NotAllowedError } from "src/core/errors/not-allowed-error";
 
 interface DeleteAnswersUseCaseRequest {
-  authorId: string
-  answerId: string
+  authorId: string;
+  answerId: string;
 }
 
 type DeleteAnswersUseCaseResponse = Either<
   ResourceNotFoundError | NotAllowedError,
   null
->
+>;
 
 export class DeleteAnswersUseCase {
   constructor(private answersRepository: AnswersRepository) {}
@@ -20,18 +20,18 @@ export class DeleteAnswersUseCase {
     authorId,
     answerId,
   }: DeleteAnswersUseCaseRequest): Promise<DeleteAnswersUseCaseResponse> {
-    const answers = await this.answersRepository.findById(answerId)
+    const answers = await this.answersRepository.findById(answerId);
 
     if (!answers) {
-      return left(new ResourceNotFoundError())
+      return left(new ResourceNotFoundError());
     }
 
     if (authorId !== answers.authorId.toString()) {
-      return left(new NotAllowedError())
+      return left(new NotAllowedError());
     }
 
-    this.answersRepository.delete(answers)
+    this.answersRepository.delete(answers);
 
-    return right(null)
+    return right(null);
   }
 }

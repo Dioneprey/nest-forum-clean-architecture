@@ -6,11 +6,14 @@ import { JwtService } from "@nestjs/jwt";
 import { QuestionFactory } from "test/factories/make-question";
 import { StudentFactory } from "test/factories/make-student";
 import { DatabaseModule } from "src/infra/database/database.module";
+import { PrismaService } from "src/infra/database/prisma/prisma.service";
 
-describe("Create question (E2E)", () => {
+describe("Edit question (E2E)", () => {
   let app: INestApplication;
   let studentFactory: StudentFactory;
   let questionFactory: QuestionFactory;
+  let prisma: PrismaService;
+
   let jwt: JwtService;
 
   beforeAll(async () => {
@@ -23,40 +26,40 @@ describe("Create question (E2E)", () => {
 
     studentFactory = moduleRef.get(StudentFactory);
     questionFactory = moduleRef.get(QuestionFactory);
+    prisma = moduleRef.get(PrismaService);
     jwt = moduleRef.get(JwtService);
 
     await app.init();
   });
 
-  test("[GET] /questions", async () => {
+  test("[PUT] /questions/:id", async () => {
     const user = await studentFactory.makePrismaStudent();
 
     const accessToken = jwt.sign({ sub: user.id.toString() });
 
-    await Promise.all([
-      questionFactory.makePrismaQuestion({
-        authorId: user.id,
-        title: "Question 01",
-      }),
+    const question = await questionFactory.makePrismaQuestion({
+      authorId: user.id,
+    });
 
-      questionFactory.makePrismaQuestion({
-        authorId: user.id,
-        title: "Question 02",
-      }),
-    ]);
+    const questionId = question.id.toString();
 
     const response = await request(app.getHttpServer())
-      .get("/questions")
+      .put(`/questions/${questionId}`)
       .set("Authorization", `Bearer ${accessToken}`)
-      .send();
-    console.log(response.body.questions);
+      .send({
+        title: "New Title",
+        content: "New content",
+      });
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({
-      questions: expect.arrayContaining([
-        expect.objectContaining({ title: "Question 01" }),
-        expect.objectContaining({ title: "Question 02" }),
-      ]),
+    expect(response.statusCode).toBe(204);
+
+    const questionOnDatabase = await prisma.question.findFirst({
+      where: {
+        title: "New Title",
+        content: "New content",
+      },
     });
+
+    expect(questionOnDatabase).toBeTruthy();
   });
 });
