@@ -6,26 +6,26 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-} from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 
-@Controller('/attachment')
+@Controller("/attachment")
 export class UploadAttachmentController {
   //   constructor(private getQuestionBySlug: GetQuestionBySlugUseCase) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor("file"))
   async handle(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 2 }), // 2mb
-          new FileTypeValidator({ fileType: '.(png|jpg|jpeg|pdf)' }),
+          new FileTypeValidator({ fileType: ".(png|jpg|jpeg|pdf)" }),
         ],
       }),
     )
     file: Express.Multer.File,
   ) {
-    console.log(file)
+    console.log(file);
   }
 }

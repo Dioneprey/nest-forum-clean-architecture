@@ -1,20 +1,20 @@
-import { Either, right } from 'src/core/either'
-import { Notification } from '../../entities/notification'
-import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
-import { NotificationsRepository } from '../repositories/notificationsRepository'
+import { Either, right } from "src/core/either";
+import { Notification } from "../../entities/notification";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
+import { NotificationsRepository } from "../repositories/notificationsRepository";
 
 export interface SendNotificationUseCaseRequest {
-  recipientId: string
-  title: string
-  content: string
+  recipientId: string;
+  title: string;
+  content: string;
 }
 
 export type SendNotificationUseCaseResponse = Either<
   null,
   {
-    notification: Notification
+    notification: Notification;
   }
->
+>;
 
 export class SendNotificationUseCase {
   constructor(private notificationsRepository: NotificationsRepository) {}
@@ -28,12 +28,12 @@ export class SendNotificationUseCase {
       recipientId: new UniqueEntityID(recipientId),
       title,
       content,
-    })
+    });
 
-    await this.notificationsRepository.create(notification)
+    await this.notificationsRepository.create(notification);
 
     return right({
       notification,
-    })
+    });
   }
 }
