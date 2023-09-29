@@ -1,11 +1,11 @@
-import { Prisma, Comment as PrismaComment } from "@prisma/client";
-import { UniqueEntityID } from "src/core/entities/unique-entity-id";
-import { AnswerComment } from "src/domain/forum/enterprise/entities/answer-comment";
+import { Prisma, Comment as PrismaComment } from '@prisma/client'
+import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { AnswerComment } from 'src/domain/forum/enterprise/entities/answer-comment'
 
 export class PrismaAnswerCommentMapper {
   static toDomain(raw: PrismaComment): AnswerComment {
     if (!raw.answerId) {
-      throw new Error("Invalid comment type.");
+      throw new Error('Invalid comment type.')
     }
 
     return AnswerComment.create(
@@ -17,7 +17,7 @@ export class PrismaAnswerCommentMapper {
         updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
-    );
+    )
   }
 
   static toPrisma(
@@ -30,6 +30,6 @@ export class PrismaAnswerCommentMapper {
       content: answerComment.content,
       createdAt: answerComment.createdAt,
       updatedAt: answerComment.updatedAt,
-    };
+    }
   }
 }

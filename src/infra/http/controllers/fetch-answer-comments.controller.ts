@@ -4,44 +4,44 @@ import {
   Query,
   BadRequestException,
   Param,
-} from "@nestjs/common";
-import { ZodValidationPipe } from "src/infra/http/pipes/zod-validation.pipe";
+} from '@nestjs/common'
+import { ZodValidationPipe } from 'src/infra/http/pipes/zod-validation.pipe'
 
-import { z } from "zod";
-import { FetchAnswerCommentsUseCase } from "src/domain/forum/application/use-cases/fetch-answer-comments";
-import { CommentPresenter } from "../presenters/comment-presenter";
+import { z } from 'zod'
+import { FetchAnswerCommentsUseCase } from 'src/domain/forum/application/use-cases/fetch-answer-comments'
+import { CommentPresenter } from '../presenters/comment-presenter'
 
 const pageQueryParamSchema = z
   .string()
   .optional()
-  .default("1")
+  .default('1')
   .transform(Number)
-  .pipe(z.number().min(1));
+  .pipe(z.number().min(1))
 
-type PageQueryParamSchema = z.infer<typeof pageQueryParamSchema>;
+type PageQueryParamSchema = z.infer<typeof pageQueryParamSchema>
 
-const queryValidationPipe = new ZodValidationPipe(pageQueryParamSchema);
+const queryValidationPipe = new ZodValidationPipe(pageQueryParamSchema)
 
-@Controller("/answers/:answerId/comments")
+@Controller('/answers/:answerId/comments')
 export class FetchAnswerCommentsController {
   constructor(private fetchAnswerComments: FetchAnswerCommentsUseCase) {}
 
   @Get()
   async handle(
-    @Query("page", queryValidationPipe) page: PageQueryParamSchema,
-    @Param("answerId") answerId: string,
+    @Query('page', queryValidationPipe) page: PageQueryParamSchema,
+    @Param('answerId') answerId: string,
   ) {
     const result = await this.fetchAnswerComments.execute({
       page,
       answerId,
-    });
+    })
 
     if (result.isLeft()) {
-      throw new BadRequestException();
+      throw new BadRequestException()
     }
 
-    const answerComments = result.value.answerComments;
+    const answerComments = result.value.answerComments
 
-    return { answerComments: answerComments.map(CommentPresenter.toHTTP) };
+    return { answerComments: answerComments.map(CommentPresenter.toHTTP) }
   }
 }
