@@ -4,13 +4,13 @@ import { QuestionsRepository } from 'src/domain/forum/application/repositories/q
 import { Question } from 'src/domain/forum/enterprise/entities/question'
 import { PrismaService } from '../prisma.service'
 import { PrismaQuestionMapper } from '../mappers/prisma-question-mapper'
-import { PrismaQuestionAttachmentsRepository } from './prisma-question-attachments-repository'
+import { QuestionAttachmentsRepository } from 'src/domain/forum/application/repositories/questions-attachments-repository'
 
 @Injectable()
 export class PrismaQuestionsRepository implements QuestionsRepository {
   constructor(
     private prisma: PrismaService,
-    private questionAttachmentsRepository: PrismaQuestionAttachmentsRepository,
+    private questionAttachmentsRepository: QuestionAttachmentsRepository,
   ) {}
 
   async findById(id: string): Promise<Question | null> {

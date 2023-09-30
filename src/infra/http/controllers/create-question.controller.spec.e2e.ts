@@ -67,6 +67,6 @@ describe('Create question (E2E)', () => {
       },
     })
 
-    expect(attachmentOnDatabase)
+    expect(attachmentOnDatabase).toHaveLength(2)
   })
 })
