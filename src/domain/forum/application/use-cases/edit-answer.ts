@@ -51,7 +51,7 @@ export class EditAnswerUseCase {
     const answerAttachmentList = new AnswerAttachmentList(
       currentAnswerAttachment,
     );
-    console.log(attachmentsId);
+
     const answersAttachments = attachmentsId.map((attachmentId) => {
       return AnswerAttachment.create({
         attachmentId: new UniqueEntityID(attachmentId),
@@ -64,7 +64,7 @@ export class EditAnswerUseCase {
     answer.attachments = answerAttachmentList;
     answer.content = content || answer.content;
 
-    this.answersRepository.save(answer);
+    await this.answersRepository.save(answer);
 
     return right({
       answer,

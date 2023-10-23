@@ -1,5 +1,4 @@
 import { makeAnswer } from "test/factories/make-answer";
-import { OnAnswerCreated } from "./on-answer-created";
 import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
 import { InMemoryAnswerAttachmentRepository } from "test/repositories/in-memory-answer-attachments-repository";
 import { InMemoryQuestionsRepository } from "test/repositories/in-memory-questions-repository";
@@ -15,6 +14,7 @@ import { SpyInstance } from "vitest";
 import { waitFor } from "test/utils/wait-for";
 import { InMemoryAttachmentsRepository } from "test/repositories/in-memory-attachments-repository";
 import { InMemoryStudentsRepository } from "test/repositories/in-memory-students-repository";
+import { OnQuestionBestAnswerChosen } from "./on-question-best-answer-chosen";
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository;
@@ -29,7 +29,7 @@ let sendNotificationExecuteSpy: SpyInstance<
   Promise<SendNotificationUseCaseResponse>
 >;
 
-describe("On Answer Created", () => {
+describe("On Question Best Answer Chosen", () => {
   beforeEach(() => {
     inMemoryQuestionAttachmentsRepository =
       new InMemoryQuestionAttachmentsRepository();
@@ -55,15 +55,22 @@ describe("On Answer Created", () => {
     sendNotificationExecuteSpy = vi.spyOn(sendNotificationUseCase, "execute");
 
     // eslint-disable-next-line no-new
-    new OnAnswerCreated(inMemoryQuestionsRepository, sendNotificationUseCase);
+    new OnQuestionBestAnswerChosen(
+      inMemoryAnswersRepository,
+      sendNotificationUseCase,
+    );
   });
 
-  it("should send a notification when an answer is created", async () => {
+  it("should send a notification when question has new best answer chosen", async () => {
     const question = makeQuestion();
     const answer = makeAnswer({ questionId: question.id });
 
     inMemoryQuestionsRepository.create(question);
     inMemoryAnswersRepository.create(answer);
+
+    question.bestAnswerId = answer.id;
+
+    await inMemoryQuestionsRepository.save(question);
 
     await waitFor(() => {
       expect(sendNotificationExecuteSpy).toHaveBeenCalled();
