@@ -7,13 +7,12 @@ import { QuestionFactory } from 'test/factories/make-question'
 import { StudentFactory } from 'test/factories/make-student'
 import { DatabaseModule } from 'src/infra/database/database.module'
 import { PrismaService } from 'src/infra/database/prisma/prisma.service'
-import { AnswerFactory } from 'test/factories/make-answer'
+import { waitFor } from 'test/utils/wait-for'
 
-describe('Comment on answer (E2E)', () => {
+describe('On answer created (E2E)', () => {
   let app: INestApplication
   let studentFactory: StudentFactory
   let questionFactory: QuestionFactory
-  let answerFactory: AnswerFactory
   let prisma: PrismaService
 
   let jwt: JwtService
@@ -21,21 +20,20 @@ describe('Comment on answer (E2E)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [StudentFactory, QuestionFactory, AnswerFactory],
+      providers: [StudentFactory, QuestionFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     studentFactory = moduleRef.get(StudentFactory)
     questionFactory = moduleRef.get(QuestionFactory)
-    answerFactory = moduleRef.get(AnswerFactory)
     prisma = moduleRef.get(PrismaService)
     jwt = moduleRef.get(JwtService)
 
     await app.init()
   })
 
-  test('[POST] /answers/:answerId/comments', async () => {
+  it('should send a notification when answer is created', async () => {
     const user = await studentFactory.makePrismaStudent()
 
     const accessToken = jwt.sign({ sub: user.id.toString() })
@@ -44,28 +42,24 @@ describe('Comment on answer (E2E)', () => {
       authorId: user.id,
     })
 
-    const answer = await answerFactory.makePrismaAnswer({
-      questionId: question.id,
-      authorId: user.id,
-    })
+    const questionId = question.id.toString()
 
-    const answerId = answer.id.toString()
-
-    const response = await request(app.getHttpServer())
-      .post(`/answers/${answerId}/comments`)
+    await request(app.getHttpServer())
+      .post(`/questions/${questionId}/answers`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        content: 'New comment',
+        content: 'New answer',
+        attachments: [],
       })
 
-    expect(response.statusCode).toBe(201)
-
-    const commentnOnDatabase = await prisma.comment.findFirst({
-      where: {
-        content: 'New comment',
-      },
+    await waitFor(async () => {
+      const notificatiOnDatabase = await prisma.notification.findFirst({
+        where: {
+          recipientId: user.id.toString(),
+        },
+      })
+      console.log(notificatiOnDatabase)
+      expect(notificatiOnDatabase).not.toBeNull()
     })
-
-    expect(commentnOnDatabase).toBeTruthy()
   })
 })

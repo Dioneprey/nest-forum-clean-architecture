@@ -1,4 +1,4 @@
-import { Comment } from "src/domain/forum/enterprise/entities/comment";
+import { Comment } from 'src/domain/forum/enterprise/entities/comment'
 
 export class CommentPresenter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,6 +8,6 @@ export class CommentPresenter {
       content: comment.content,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
-    };
+    }
   }
 }

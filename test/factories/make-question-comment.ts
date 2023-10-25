@@ -1,12 +1,12 @@
-import { faker } from "@faker-js/faker";
-import { Injectable } from "@nestjs/common";
-import { UniqueEntityID } from "src/core/entities/unique-entity-id";
+import { faker } from '@faker-js/faker'
+import { Injectable } from '@nestjs/common'
+import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import {
   QuestionComment,
   QuestionCommentProps,
-} from "src/domain/forum/enterprise/entities/question-comment";
-import { PrismaQuestionCommentMapper } from "src/infra/database/prisma/mappers/prisma-question-comment-mapper";
-import { PrismaService } from "src/infra/database/prisma/prisma.service";
+} from 'src/domain/forum/enterprise/entities/question-comment'
+import { PrismaQuestionCommentMapper } from 'src/infra/database/prisma/mappers/prisma-question-comment-mapper'
+import { PrismaService } from 'src/infra/database/prisma/prisma.service'
 
 export function makeQuestionComment(
   override: Partial<QuestionCommentProps> = {},
@@ -20,9 +20,9 @@ export function makeQuestionComment(
       ...override,
     },
     id,
-  );
+  )
 
-  return questionComment;
+  return questionComment
 }
 
 @Injectable()
@@ -32,12 +32,12 @@ export class QuestionCommentFactory {
   async makePrismaQuestionComment(
     data: Partial<QuestionCommentProps> = {},
   ): Promise<QuestionComment> {
-    const questioncomment = makeQuestionComment(data);
+    const questioncomment = makeQuestionComment(data)
 
     await this.prisma.comment.create({
       data: PrismaQuestionCommentMapper.toPrisma(questioncomment),
-    });
+    })
 
-    return questioncomment;
+    return questioncomment
   }
 }

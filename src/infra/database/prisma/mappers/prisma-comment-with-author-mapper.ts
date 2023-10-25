@@ -1,10 +1,10 @@
-import { Comment as PrismaComment, User as PrismaUser } from "@prisma/client";
-import { UniqueEntityID } from "src/core/entities/unique-entity-id";
-import { CommentWithAuthor } from "src/domain/forum/enterprise/entities/value-objects/comment-with-author";
+import { Comment as PrismaComment, User as PrismaUser } from '@prisma/client'
+import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { CommentWithAuthor } from 'src/domain/forum/enterprise/entities/value-objects/comment-with-author'
 
 type PrismaCommentWithAuthor = PrismaComment & {
-  author: PrismaUser;
-};
+  author: PrismaUser
+}
 
 export class PrismaCommentWithAuthorMapper {
   static toDomain(raw: PrismaCommentWithAuthor): CommentWithAuthor {
@@ -15,6 +15,6 @@ export class PrismaCommentWithAuthorMapper {
       content: raw.content,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
-    });
+    })
   }
 }

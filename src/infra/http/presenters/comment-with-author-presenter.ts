@@ -1,4 +1,4 @@
-import { CommentWithAuthor } from "src/domain/forum/enterprise/entities/value-objects/comment-with-author";
+import { CommentWithAuthor } from 'src/domain/forum/enterprise/entities/value-objects/comment-with-author'
 
 export class CommentWithAuthorPresenter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,6 +10,6 @@ export class CommentWithAuthorPresenter {
       content: commentWithAuthor.content,
       createdAt: commentWithAuthor.createdAt,
       updatedAt: commentWithAuthor.updatedAt,
-    };
+    }
   }
 }

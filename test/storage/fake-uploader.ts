@@ -1,24 +1,24 @@
 import {
   UploadParams,
   Uploader,
-} from "src/domain/forum/application/storage/uploader";
+} from 'src/domain/forum/application/storage/uploader'
 
 interface Upload {
-  fileName: string;
-  url: string;
+  fileName: string
+  url: string
 }
 
 export class FakeUploader implements Uploader {
-  public uploads: Upload[] = [];
+  public uploads: Upload[] = []
 
   async upload({ fileName }: UploadParams) {
-    const url = `${new Date().getMilliseconds} - ${fileName}`;
+    const url = `${new Date().getMilliseconds} - ${fileName}`
 
     this.uploads.push({
       fileName,
       url,
-    });
+    })
 
-    return { url };
+    return { url }
   }
 }

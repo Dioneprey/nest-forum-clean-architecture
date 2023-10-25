@@ -1,53 +1,53 @@
-import { expect } from "vitest";
+import { expect } from 'vitest'
 
-import { InMemoryAttachmentsRepository } from "test/repositories/in-memory-attachments-repository";
-import { UploadAndCreateAttachmentUseCase } from "./upload-and-create-attachment";
-import { FakeUploader } from "test/storage/fake-uploader";
-import { InvalidAttachmentType } from "./errors/invalid-attachment-type-error";
+import { InMemoryAttachmentsRepository } from 'test/repositories/in-memory-attachments-repository'
+import { UploadAndCreateAttachmentUseCase } from './upload-and-create-attachment'
+import { FakeUploader } from 'test/storage/fake-uploader'
+import { InvalidAttachmentType } from './errors/invalid-attachment-type-error'
 
-let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository;
-let fakeUploader: FakeUploader;
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository
+let fakeUploader: FakeUploader
 
-let sut: UploadAndCreateAttachmentUseCase;
+let sut: UploadAndCreateAttachmentUseCase
 
-describe("Upload ad create attachment", () => {
+describe('Upload ad create attachment', () => {
   beforeEach(() => {
-    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository();
-    fakeUploader = new FakeUploader();
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository()
+    fakeUploader = new FakeUploader()
     sut = new UploadAndCreateAttachmentUseCase(
       inMemoryAttachmentsRepository,
       fakeUploader,
-    );
-  });
+    )
+  })
 
-  it("should be able to upload and create an attachment", async () => {
+  it('should be able to upload and create an attachment', async () => {
     const result = await sut.execute({
-      fileName: "profile.png",
-      fileType: "image/png",
-      body: Buffer.from(""),
-    });
+      fileName: 'profile.png',
+      fileType: 'image/png',
+      body: Buffer.from(''),
+    })
 
-    expect(result.isRight()).toBeTruthy();
+    expect(result.isRight()).toBeTruthy()
     expect(result.value).toEqual({
       attachment: inMemoryAttachmentsRepository.items[0],
-    });
-    expect(fakeUploader.uploads).toHaveLength(1);
+    })
+    expect(fakeUploader.uploads).toHaveLength(1)
     expect(fakeUploader.uploads[0]).toEqual(
       expect.objectContaining({
-        fileName: "profile.png",
+        fileName: 'profile.png',
       }),
-    );
-  });
+    )
+  })
 
-  it("should not be able to upload and create an attachment with invalid file type", async () => {
+  it('should not be able to upload and create an attachment with invalid file type', async () => {
     const result = await sut.execute({
-      fileName: "profile.png",
-      fileType: "audio/mpeg",
-      body: Buffer.from(""),
-    });
+      fileName: 'profile.png',
+      fileType: 'audio/mpeg',
+      body: Buffer.from(''),
+    })
 
-    expect(result.isLeft()).toBeTruthy();
-    expect(result.value).toBeInstanceOf(InvalidAttachmentType);
-    expect(fakeUploader.uploads).toHaveLength(0);
-  });
-});
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(InvalidAttachmentType)
+    expect(fakeUploader.uploads).toHaveLength(0)
+  })
+})

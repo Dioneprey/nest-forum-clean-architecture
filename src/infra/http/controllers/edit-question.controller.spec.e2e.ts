@@ -1,24 +1,24 @@
-import { INestApplication } from "@nestjs/common";
-import { Test } from "@nestjs/testing";
-import request from "supertest";
-import { AppModule } from "src/infra/app.module";
-import { JwtService } from "@nestjs/jwt";
-import { QuestionFactory } from "test/factories/make-question";
-import { StudentFactory } from "test/factories/make-student";
-import { DatabaseModule } from "src/infra/database/database.module";
-import { PrismaService } from "src/infra/database/prisma/prisma.service";
-import { AttachmentFactory } from "test/factories/make-attachment";
-import { QuestionAttachmentFactory } from "test/factories/make-question-attachment";
+import { INestApplication } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import request from 'supertest'
+import { AppModule } from 'src/infra/app.module'
+import { JwtService } from '@nestjs/jwt'
+import { QuestionFactory } from 'test/factories/make-question'
+import { StudentFactory } from 'test/factories/make-student'
+import { DatabaseModule } from 'src/infra/database/database.module'
+import { PrismaService } from 'src/infra/database/prisma/prisma.service'
+import { AttachmentFactory } from 'test/factories/make-attachment'
+import { QuestionAttachmentFactory } from 'test/factories/make-question-attachment'
 
-describe("Edit question (E2E)", () => {
-  let app: INestApplication;
-  let studentFactory: StudentFactory;
-  let questionFactory: QuestionFactory;
-  let attachmentFactory: AttachmentFactory;
-  let questionAttachmentFactory: QuestionAttachmentFactory;
-  let prisma: PrismaService;
+describe('Edit question (E2E)', () => {
+  let app: INestApplication
+  let studentFactory: StudentFactory
+  let questionFactory: QuestionFactory
+  let attachmentFactory: AttachmentFactory
+  let questionAttachmentFactory: QuestionAttachmentFactory
+  let prisma: PrismaService
 
-  let jwt: JwtService;
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -29,33 +29,33 @@ describe("Edit question (E2E)", () => {
         AttachmentFactory,
         QuestionAttachmentFactory,
       ],
-    }).compile();
+    }).compile()
 
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication()
 
-    studentFactory = moduleRef.get(StudentFactory);
-    questionFactory = moduleRef.get(QuestionFactory);
-    attachmentFactory = moduleRef.get(AttachmentFactory);
-    questionAttachmentFactory = moduleRef.get(QuestionAttachmentFactory);
-    prisma = moduleRef.get(PrismaService);
-    jwt = moduleRef.get(JwtService);
+    studentFactory = moduleRef.get(StudentFactory)
+    questionFactory = moduleRef.get(QuestionFactory)
+    attachmentFactory = moduleRef.get(AttachmentFactory)
+    questionAttachmentFactory = moduleRef.get(QuestionAttachmentFactory)
+    prisma = moduleRef.get(PrismaService)
+    jwt = moduleRef.get(JwtService)
 
-    await app.init();
-  });
+    await app.init()
+  })
 
-  test("[PUT] /questions/:id", async () => {
-    const user = await studentFactory.makePrismaStudent();
+  test('[PUT] /questions/:id', async () => {
+    const user = await studentFactory.makePrismaStudent()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() });
+    const accessToken = jwt.sign({ sub: user.id.toString() })
 
     const question = await questionFactory.makePrismaQuestion({
       authorId: user.id,
-    });
+    })
 
     const [attachment1, attachment2] = await Promise.all([
       await attachmentFactory.makePrismaAttachment(),
       await attachmentFactory.makePrismaAttachment(),
-    ]);
+    ])
 
     await Promise.all([
       questionAttachmentFactory.makePrismaQuestionAttachment({
@@ -66,39 +66,39 @@ describe("Edit question (E2E)", () => {
         attachmentId: attachment2.id,
         questionId: question.id,
       }),
-    ]);
+    ])
 
-    const attachment3 = await attachmentFactory.makePrismaAttachment();
+    const attachment3 = await attachmentFactory.makePrismaAttachment()
 
-    const questionId = question.id.toString();
+    const questionId = question.id.toString()
 
     const response = await request(app.getHttpServer())
       .put(`/questions/${questionId}`)
-      .set("Authorization", `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        title: "New Title",
-        content: "New content",
+        title: 'New Title',
+        content: 'New content',
         attachments: [attachment1.id.toString(), attachment3.id.toString()],
-      });
+      })
 
-    expect(response.statusCode).toBe(204);
+    expect(response.statusCode).toBe(204)
 
     const questionOnDatabase = await prisma.question.findFirst({
       where: {
-        title: "New Title",
-        content: "New content",
+        title: 'New Title',
+        content: 'New content',
       },
-    });
+    })
 
-    expect(questionOnDatabase).toBeTruthy();
+    expect(questionOnDatabase).toBeTruthy()
 
     const attachmentsOnDatabase = await prisma.attachment.findMany({
       where: {
         questionId: questionOnDatabase?.id,
       },
-    });
+    })
 
-    expect(attachmentsOnDatabase).toHaveLength(2);
+    expect(attachmentsOnDatabase).toHaveLength(2)
     expect(attachmentsOnDatabase).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -108,6 +108,6 @@ describe("Edit question (E2E)", () => {
           id: attachment3.id.toString(),
         }),
       ]),
-    );
-  });
-});
+    )
+  })
+})
