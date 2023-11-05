@@ -1,18 +1,18 @@
-import { Either, left, right } from 'src/core/either'
-import { QuestionsRepository } from '../repositories/questions-repository'
-import { ResourceNotFoundError } from 'src/core/errors/resource-not-found-error'
-import { NotAllowedError } from 'src/core/errors/not-allowed-error'
-import { Injectable } from '@nestjs/common'
+import { Either, left, right } from "src/core/either";
+import { QuestionsRepository } from "../repositories/questions-repository";
+import { ResourceNotFoundError } from "src/core/errors/resource-not-found-error";
+import { NotAllowedError } from "src/core/errors/not-allowed-error";
+import { Injectable } from "@nestjs/common";
 
 interface DeleteQuestionUseCaseRequest {
-  authorId: string
-  questionId: string
+  authorId: string;
+  questionId: string;
 }
 
 type DeleteQuestionUseCaseResponse = Either<
   ResourceNotFoundError | NotAllowedError,
   null
->
+>;
 
 @Injectable()
 export class DeleteQuestionUseCase {
@@ -22,18 +22,18 @@ export class DeleteQuestionUseCase {
     authorId,
     questionId,
   }: DeleteQuestionUseCaseRequest): Promise<DeleteQuestionUseCaseResponse> {
-    const question = await this.questionsRepository.findById(questionId)
+    const question = await this.questionsRepository.findById(questionId);
 
     if (!question) {
-      return left(new ResourceNotFoundError())
+      return left(new ResourceNotFoundError());
     }
 
     if (authorId !== question.authorId.toString()) {
-      return left(new NotAllowedError())
+      return left(new NotAllowedError());
     }
 
-    this.questionsRepository.delete(question)
+    this.questionsRepository.delete(question);
 
-    return right(null)
+    return right(null);
   }
 }

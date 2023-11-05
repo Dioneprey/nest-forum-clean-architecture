@@ -1,37 +1,52 @@
-import { config } from 'dotenv'
+import { config } from "dotenv";
 
-import { PrismaClient } from '@prisma/client'
-import { randomUUID } from 'node:crypto'
-import { execSync } from 'node:child_process'
+import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "node:crypto";
+import { execSync } from "node:child_process";
+import { DomainEvents } from "src/core/events/domain-events";
+import { Redis } from "ioredis";
+import { envSchema } from "src/infra/env/env";
 
-config({ path: '.env', override: true })
-config({ path: '.env.test', override: true })
+config({ path: ".env", override: true });
+config({ path: ".env.test", override: true });
 
-const prisma = new PrismaClient()
+const env = envSchema.parse(process.env);
+
+const prisma = new PrismaClient();
+
+const redis = new Redis({
+  host: env.REDIS_HOST,
+  port: env.REDIS_PORT,
+  db: env.REDIS_DB,
+});
 
 function generateUniqueDatabaseURL(schemaId: string) {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('Please provide a DATABASE_URL environment variable.')
+  if (!env.DATABASE_URL) {
+    throw new Error("Please provide a DATABASE_URL environment variable.");
   }
 
-  const url = new URL(process.env.DATABASE_URL)
+  const url = new URL(env.DATABASE_URL);
 
-  url.searchParams.set('schema', schemaId)
+  url.searchParams.set("schema", schemaId);
 
-  return url.toString()
+  return url.toString();
 }
 
-const schemaId = randomUUID()
+const schemaId = randomUUID();
 
 beforeAll(async () => {
-  const databaseUrl = generateUniqueDatabaseURL(schemaId)
+  const databaseUrl = generateUniqueDatabaseURL(schemaId);
 
-  process.env.DATABASE_URL = databaseUrl
+  env.DATABASE_URL = databaseUrl;
 
-  execSync('npx prisma migrate deploy')
-})
+  DomainEvents.shouldRun = true;
+
+  await redis.flushdb();
+
+  execSync("pnpm prisma migrate deploy");
+});
 
 afterAll(async () => {
-  await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`)
-  await prisma.$disconnect()
-})
+  await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`);
+  await prisma.$disconnect();
+});

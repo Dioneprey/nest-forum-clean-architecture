@@ -1,6 +1,6 @@
-import { Prisma, Notification as PrismaNotification } from '@prisma/client'
-import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
-import { Notification } from 'src/domain/notification/entities/notification'
+import { Prisma, Notification as PrismaNotification } from "@prisma/client";
+import { UniqueEntityID } from "src/core/entities/unique-entity-id";
+import { Notification } from "src/domain/notification/entities/notification";
 
 export class PrismaNotificationMapper {
   static toDomain(raw: PrismaNotification): Notification {
@@ -13,7 +13,7 @@ export class PrismaNotificationMapper {
         createdAt: raw.createdAt,
       },
       new UniqueEntityID(raw.id),
-    )
+    );
   }
 
   static toPrisma(
@@ -26,6 +26,6 @@ export class PrismaNotificationMapper {
       content: notification.content,
       readAt: notification.readAt,
       createdAt: notification.createdAt,
-    }
+    };
   }
 }

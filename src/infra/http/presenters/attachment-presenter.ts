@@ -1,4 +1,4 @@
-import { Attachment } from 'src/domain/forum/enterprise/entities/attachment'
+import { Attachment } from "src/domain/forum/enterprise/entities/attachment";
 
 export class AttachmentrPresenter {
   static toHTTP(attachment: Attachment) {
@@ -6,6 +6,6 @@ export class AttachmentrPresenter {
       id: attachment.id.toString(),
       title: attachment.title,
       url: attachment.url,
-    }
+    };
   }
 }

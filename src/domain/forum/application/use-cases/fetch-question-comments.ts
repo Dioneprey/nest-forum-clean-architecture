@@ -1,19 +1,19 @@
-import { Either, right } from 'src/core/either'
-import { QuestionCommentsRepository } from '../repositories/question-comments-repository'
-import { Injectable } from '@nestjs/common'
-import { CommentWithAuthor } from '../../enterprise/entities/value-objects/comment-with-author'
+import { Either, right } from "src/core/either";
+import { QuestionCommentsRepository } from "../repositories/question-comments-repository";
+import { Injectable } from "@nestjs/common";
+import { CommentWithAuthor } from "../../enterprise/entities/value-objects/comment-with-author";
 
 interface FetchQuestionCommentsUseCaseRequest {
-  questionId: string
-  page: number
+  questionId: string;
+  page: number;
 }
 
 type FetchQuestionCommentsUseCaseResponse = Either<
   null,
   {
-    comments: CommentWithAuthor[]
+    comments: CommentWithAuthor[];
   }
->
+>;
 @Injectable()
 export class FetchQuestionCommentsUseCase {
   constructor(private questionCommentsRepository: QuestionCommentsRepository) {}
@@ -28,10 +28,10 @@ export class FetchQuestionCommentsUseCase {
         {
           page,
         },
-      )
+      );
 
     return right({
       comments,
-    })
+    });
   }
 }
