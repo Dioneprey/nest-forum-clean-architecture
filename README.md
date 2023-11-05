@@ -6,7 +6,7 @@ Recursos Principais:
 
 - **NestJS**: Framework para construir aplicações Node.js do lado do servidor.
 - **TypeScript**: Linguagem de programação utilizada.
-- **Prisma**: ORM para gerenciamento do banco de dados da aplicação.- 
+- **Prisma**: ORM para gerenciamento do banco de dados da aplicação.
 - **Redis**: Tecnologia usada para armazenamento de cache, aumentando a performance da API.
 - **Domain Driven Design (DDD)**: Prática de design que aponta o foco para a lógica e complexidade do domínio do negócio.
 - **Clean Architecture**: Padrão de projeto que visa separar o software em camadas, cada uma com uma determinada responsabilidade.
